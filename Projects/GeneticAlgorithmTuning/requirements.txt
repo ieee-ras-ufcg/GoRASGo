@@ -1,0 +1,7 @@
+cbor
+cbor2
+pyzmq
+zmq
+numpy
+coppeliasim_zmqremoteapi_client
+jupyterlab
