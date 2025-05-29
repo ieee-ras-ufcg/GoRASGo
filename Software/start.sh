@@ -9,7 +9,7 @@ source $HOME/.venv/bin/activate
 
 # Run power management script, it stays running in the background
 # even if the user logs out, avoiding hangups
-(sudo python $HOME/GoRASGo/Software/Python/gopigo3_power.py > /dev/null 2>&1) & || echo "[ERROR] GoPiGo3 Power Failed"
+sudo python "$HOME/GoRASGo/Software/Python/gopigo3_power.py" > /dev/null 2>&1 || echo "[ERROR] GoPiGo3 Power Failed" &
 
 # Change for development directory for convenience
 cd $HOME/GoRASGo/Software/Python/Tests/ > /dev/null 2>&1 || echo "[ERROR] Test Directory Not Found"
