@@ -17,21 +17,25 @@ import os
 import time
 import RPi.GPIO as GPIO
 
-# Set the numbering mode for referencing GPIO pins
-GPIO.setmode(GPIO.BCM)
+try:
+    # Set the numbering mode for referencing GPIO pins
+    GPIO.setmode(GPIO.BCM)
 
-# Set pin 22 as input with pulldown
-GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    # Set pin 22 as input with pulldown
+    GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-# Set pin 23 as output
-GPIO.setup(23, GPIO.OUT)
+    # Set pin 23 as output
+    GPIO.setup(23, GPIO.OUT)
 
-# Write HIGH to activate board - the green LED shall stop blinking
-GPIO.output(23, True)
+    # Write HIGH to activate board - the green LED shall stop blinking
+    GPIO.output(23, True)
 
-while not GPIO.input(22):
-    time.sleep(0.1)  # Wait until next read
+    while not GPIO.input(22):
+        time.sleep(0.1)  # Wait until next read
 
-# Turn off pin and turn off rasp
-GPIO.output(23, False)
-os.system("shutdown now -h")
+    # Turn off pin and turn off rasp
+    GPIO.output(23, False)
+    os.system("shutdown now -h")
+
+except:  # The instance is already running elsewhere
+    pass
