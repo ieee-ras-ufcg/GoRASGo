@@ -1,5 +1,6 @@
 import time
 from gopigo3 import GoPiGo3
+import RPi.GPIO
 
 gpg = GoPiGo3()
 
