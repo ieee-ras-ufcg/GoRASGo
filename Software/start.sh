@@ -1,3 +1,5 @@
+#! /bin/bash
+
 # Get updates, if any, from the remote to local repo
 git -C ~/GoRASGo pull > /dev/null 2>&1 || echo -e "\n[ERROR] Git Pull Failed"
 
