@@ -7,13 +7,14 @@
 #
 # Python drivers for the GoPiGo3, updated by IEEE RAS UFCG!
 
-import spidev
 import math
 import time
 import json
-import pigpio
 import pickle
+import spidev
+import pigpio
 from os import path
+import RPi.GPIO as GPIO
 
 # From builtins import input
 __version__ = "1.3.3"
@@ -43,6 +44,10 @@ class Enumeration(object):
 
                 setattr(self, name, number)
                 number = number + 1
+
+
+class PowerError(Exception):
+    """Exception raised if the GoPiGo3 board power could not be activated"""
 
 
 class FirmwareVersionError(Exception):
@@ -221,6 +226,20 @@ class GoPiGo3(object):
         :py:meth:`~easygopigo3.EasyGoPiGo3.save_robot_constants` method.
         """
 
+        # Start board power
+        try:
+            # Set the numbering mode for referencing GPIO pins
+            GPIO.setmode(GPIO.BCM)
+
+            # Set pin 23 as output
+            GPIO.setup(23, GPIO.OUT)
+
+            # Write HIGH to activate board - the green LED shall stop blinking
+            GPIO.output(23, True)
+
+        except:
+            raise PowerError("Could not control board power.")
+
         # Initialize and setup SPI lines
         self.GPG_SPI = spidev.SpiDev()
         self.GPG_SPI.open(0, 1)
@@ -259,6 +278,10 @@ class GoPiGo3(object):
                     "GoPiGo3 firmware needs to be version %s but is currently version %s"
                     % (FIRMWARE_VERSION_REQUIRED, vfw)
                 )
+
+    def __del__(self):
+        # Turn off power enable GPIO
+        GPIO.output(23, False)
 
     def spi_transfer_array(self, data_out):
         """
