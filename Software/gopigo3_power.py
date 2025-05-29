@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-#
 # https://www.dexterindustries.com
+# https://github.com/ieee-ras-ufcg/GoRASGo
 #
 # Copyright (c) 2017 Dexter Industries
 # Released under the MIT license (http://choosealicense.com/licenses/mit/).
@@ -14,18 +13,23 @@
 # left floating (high impedance) the GoPiGo3 assumes the RPi has shut down fully.
 # SW should never write GPIO 23 to LOW or set it as an INPUT.
 
-
-import RPi.GPIO as GPIO
-import time
 import os
+import time
+import RPi.GPIO as GPIO
 
+# Set the numbering mode for referencing GPIO pins
 GPIO.setmode(GPIO.BCM)
+
+# Set pin 22 as input with pulldown
 GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
+# Set pin 23 as output and write HIGH
 GPIO.setup(23, GPIO.OUT)
 GPIO.output(23, True)
 
-while True:
-    if GPIO.input(22):
-        os.system("shutdown now -h")
-    time.sleep(0.1)
+while not GPIO.input(22):
+    time.sleep(0.1)  # Wait until next read
+
+# Turn off pin and turn off rasp
+GPIO.output(23, False)
+os.system("shutdown now -h")
