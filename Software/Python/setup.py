@@ -16,7 +16,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="gopigo3",
-    version="1.3.3",
+    version="1.4.0",
     description="Drivers and Examples for using the GoPiGo3 in Python",
     long_description=description,
     author="Modular Robotics",

@@ -17,7 +17,7 @@ from os import path
 import RPi.GPIO as GPIO
 
 # From builtins import input
-__version__ = "1.3.3"
+__version__ = "1.4.0"
 FIRMWARE_VERSION_REQUIRED = "1.0.x"  # Make sure the top 2 of 3 numbers match
 
 
