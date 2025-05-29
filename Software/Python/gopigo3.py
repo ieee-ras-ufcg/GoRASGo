@@ -240,6 +240,11 @@ class GoPiGo3(object):
         except:
             raise PowerError("Could not control board power.")
 
+        finally:
+            # Turn off and free GPIO
+            GPIO.output(23, False)
+            GPIO.cleanup(23)
+
         # Initialize and setup SPI lines
         self.GPG_SPI = spidev.SpiDev()
         self.GPG_SPI.open(0, 1)
@@ -278,10 +283,6 @@ class GoPiGo3(object):
                     "GoPiGo3 firmware needs to be version %s but is currently version %s"
                     % (FIRMWARE_VERSION_REQUIRED, vfw)
                 )
-
-    def __del__(self):
-        # Turn off power enable GPIO
-        GPIO.output(23, False)
 
     def spi_transfer_array(self, data_out):
         """
