@@ -17,14 +17,21 @@ import os
 import time
 import RPi.GPIO as GPIO
 
-# Set the numbering mode for referencing GPIO pins
-GPIO.setmode(GPIO.BCM)
+# Try to change GPIOs configuration
+try:
+    # Set the numbering mode for referencing GPIO pins
+    GPIO.setmode(GPIO.BCM)
 
-# Set pin 22 as input with pulldown
-GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    # Set pin 22 as input with pulldown
+    GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-# Set pin 23 as output and write HIGH
-GPIO.setup(23, GPIO.OUT)
+    # Set pin 23 as output
+    GPIO.setup(23, GPIO.OUT)
+
+except:  # If GPIO is busy, then another previous setup has occurred
+    exit()  # Finish script
+
+# Write HIGH to activate board - the green LED shall stop blinking
 GPIO.output(23, True)
 
 while not GPIO.input(22):
