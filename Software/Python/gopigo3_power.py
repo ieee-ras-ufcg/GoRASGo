@@ -17,11 +17,10 @@ import os
 import time
 import RPi.GPIO as GPIO
 
-# Try to change GPIOs configuration
-try:
-    # Set the numbering mode for referencing GPIO pins
-    GPIO.setmode(GPIO.BCM)
+# Set the numbering mode for referencing GPIO pins
+GPIO.setmode(GPIO.BCM)
 
+try:
     # Set pin 22 as input with pulldown
     GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
