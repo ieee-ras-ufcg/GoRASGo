@@ -7,21 +7,7 @@
 #
 # Python drivers for the GoPiGo3, updated by IEEE RAS UFCG!
 
-from __future__ import print_function
-from __future__ import division
-
-# From builtins import input
-hardware_connected = True
-__version__ = "1.3.3"
-
-try:
-    import spidev
-    import fcntl  # for lockf mutex support
-
-except:
-    hardware_connected = False
-    print("Can't import spidev or fcntl")
-
+import spidev
 import math
 import time
 import json
@@ -29,36 +15,31 @@ import pigpio
 import pickle
 from os import path
 
+# From builtins import input
+__version__ = "1.3.3"
 FIRMWARE_VERSION_REQUIRED = "1.0.x"  # Make sure the top 2 of 3 numbers match
-
-if hardware_connected:
-    GPG_SPI = spidev.SpiDev()
-    GPG_SPI.open(0, 1)
-    GPG_SPI.max_speed_hz = 500000
-    GPG_SPI.mode = 0b00
-    GPG_SPI.bits_per_word = 8
 
 
 class Enumeration(object):
-    def __init__(self, names):  # or *names, with no .split()
+    def __init__(self, names):  # Or *names, with no .split()
         number = 0
         for _, name in enumerate(names.split("\n")):
             if name.find(",") >= 0:
-                # strip out the spaces
+                # Strip out the spaces
                 while name.find(" ") != -1:
                     name = name[: name.find(" ")] + name[(name.find(" ") + 1) :]
 
-                # strip out the commas
+                # Strip out the commas
                 while name.find(",") != -1:
                     name = name[: name.find(",")] + name[(name.find(",") + 1) :]
 
-                # if the value was specified
+                # If the value was specified
                 if name.find("=") != -1:
                     number = int(float(name[(name.find("=") + 1) :]))
                     name = name[: name.find("=")]
 
-                # optionally print to confirm that it's working correctly
-                # print "%40s has a value of %d" % (name, number)
+                # Optionally print to confirm that it's working correctly
+                # Print "%40s has a value of %d" % (name, number)
 
                 setattr(self, name, number)
                 number = number + 1
@@ -81,8 +62,8 @@ class ValueError(Exception):
 
 
 class GoPiGo3(object):
-    WHEEL_BASE_WIDTH = 117  # distance (mm) from left wheel to right wheel. This works with the initial GPG3 prototype. Will need to be adjusted.
-    WHEEL_DIAMETER = 66.5  # wheel diameter (mm)
+    WHEEL_BASE_WIDTH = 117  # Distance (mm) from left wheel to right wheel. This works with the initial GPG3 prototype
+    WHEEL_DIAMETER = 66.5  # Wheel diameter (mm)
     WHEEL_BASE_CIRCUMFERENCE = (
         WHEEL_BASE_WIDTH * math.pi
     )  # The circumference of the circle the wheels will trace while turning (mm)
@@ -91,10 +72,10 @@ class GoPiGo3(object):
     )  # The circumference of the wheels (mm)
 
     MOTOR_GEAR_RATIO = 120  # Motor gear ratio # 220 for Nicole's prototype
-    ENCODER_TICKS_PER_ROTATION = 6  # Encoder ticks per motor rotation (number of magnet positions) # 16 for early prototypes
+    ENCODER_TICKS_PER_ROTATION = 6  # Encoder ticks per motor rotation (number of magnet positions) (16 for early prototypes)
     MOTOR_TICKS_PER_DEGREE = (
         MOTOR_GEAR_RATIO * ENCODER_TICKS_PER_ROTATION
-    ) / 360.0  # encoder ticks per output shaft rotation degree
+    ) / 360.0  # Encoder ticks per output shaft rotation degree
 
     GROVE_I2C_LENGTH_LIMIT = 32
 
@@ -238,15 +219,21 @@ class GoPiGo3(object):
         By-default, the constructor tries to read the ``config_file_path`` file and silently fails if something goes wrong: wrong permissions, non-existent file, improper key values and so on.
         To set custom values to these 2 constants, use :py:meth:`~easygopigo3.EasyGoPiGo3.set_robot_constants` method and for saving the constants to a file call
         :py:meth:`~easygopigo3.EasyGoPiGo3.save_robot_constants` method.
-
         """
 
+        # Initialize and setup SPI lines
+        self.GPG_SPI = spidev.SpiDev()
+        self.GPG_SPI.open(0, 1)
+        self.GPG_SPI.max_speed_hz = 500000
+        self.GPG_SPI.mode = 0b00
+        self.GPG_SPI.bits_per_word = 8
+
         # Make sure the SPI lines are configured for mode ALT0 so that the hardware SPI controller can use them
-        pi_gpio = pigpio.pi()
-        pi_gpio.set_mode(9, pigpio.ALT0)
-        pi_gpio.set_mode(10, pigpio.ALT0)
-        pi_gpio.set_mode(11, pigpio.ALT0)
-        pi_gpio.stop()
+        self.GPG_GPIO = pigpio.pi()
+        self.GPG_GPIO.set_mode(9, pigpio.ALT0)
+        self.GPG_GPIO.set_mode(10, pigpio.ALT0)
+        self.GPG_GPIO.set_mode(11, pigpio.ALT0)
+        self.GPG_GPIO.stop()
 
         self.SPI_Address = addr
 
@@ -283,7 +270,7 @@ class GoPiGo3(object):
         Returns a list of the bytes read.
         """
 
-        result = GPG_SPI.xfer2(data_out)
+        result = self.GPG_SPI.xfer2(data_out)
         return result
 
     def spi_read_8(self, MessageType):
