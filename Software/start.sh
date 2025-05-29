@@ -1,11 +1,11 @@
 # Get updates, if any, from the remote to local repo
-git -C ~/GoRASGo pull > /dev/null 2>&1 || echo "[ERROR] Git Pull Failed"
+git -C ~/GoRASGo pull > /dev/null 2>&1 || echo -e "\n[ERROR] Git Pull Failed"
 
 # Start pigpiod daemon for advanced GPIO control
 sudo pigpiod > /dev/null 2>&1 || echo "[ERROR] Pigpio Daemon Failed"
 
 # Activate python virtual environment
-source $HOME/.venv/bin/activate
+source $HOME/.venv/bin/activate > /dev/null 2>&1 || echo "[ERROR] Venv Activation Failed"
 
 # Run power management script, it stays running in the background
 # even if the user logs out, avoiding hangups
