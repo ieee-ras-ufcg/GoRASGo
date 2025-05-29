@@ -20,12 +20,8 @@ import RPi.GPIO as GPIO
 # Set the numbering mode for referencing GPIO pins
 GPIO.setmode(GPIO.BCM)
 
-try:
-    # Set pin 22 as input with pulldown
-    GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
-except:  # If GPIO is busy, then another previous setup has occurred
-    pass
+# Set pin 22 as input with pulldown
+GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # Set pin 23 as output
 GPIO.setup(23, GPIO.OUT)
