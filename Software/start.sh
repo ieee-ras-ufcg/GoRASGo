@@ -6,7 +6,7 @@ source $HOME/.venv/bin/activate
 
 # Run power management script, it stays running in the background
 # even if the user logs out, avoiding hangups
-python -m $HOME/GoRASGo/Software/Python/gopigo3_power.py &
+python -m $HOME/GoRASGo/Software/Python/gopigo3_power &
 
 # Change for development directory for convenience
 cd $HOME/GoRASGo/Software/Python/Tests/
