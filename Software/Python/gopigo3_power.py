@@ -29,7 +29,7 @@ try:
     GPIO.setup(23, GPIO.OUT)
 
 except:  # If GPIO is busy, then another previous setup has occurred
-    exit()  # Finish script
+    pass
 
 # Write HIGH to activate board - the green LED shall stop blinking
 GPIO.output(23, True)
