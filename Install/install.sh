@@ -8,13 +8,15 @@ sudo raspi-config nonint do_onewire 0
 sudo raspi-config nonint do_ssh 0
 sudo raspi-config nonint do_vnc 0
 
-echo "Installing Python requirements..."
+echo "Setting Python development environment..."
 cd $HOME/GoRASGo/Software/Python
+echo "Creating Python Virtual Environment..."
 python -m venv $HOME/.venv
+echo "Activating Python Virtual Environment..."
 source $HOME/.venv/bin/activate
+echo "Installing Python requirements..."
 pip install --upgrade pip setuptools wheel > /dev/null
 pip install -r requirements.txt || { echo "[ERROR] Failed to install requirements"; exit 1; }
-
 echo "Installing GoRASGo Python package..."
 pip install . || { echo "[ERROR] Failed to install GoRASGo package"; exit 1; }
 
