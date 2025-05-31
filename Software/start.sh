@@ -1,5 +1,8 @@
 #! /bin/bash
 
+# Checkout to test branch
+git checkout test > /dev/null 2>&1 || echo "[ERROR] Checkout Failed"
+
 # Get updates, if any, from the remote to local repo
 git -C ~/GoRASGo pull > /dev/null 2>&1 || echo -e "\n[ERROR] Git Pull Failed"
 
