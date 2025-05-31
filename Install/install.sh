@@ -1,110 +1,32 @@
-#! /bin/bash
+#!/bin/bash
 
-PIHOME=/home/pi
-DEXTER=Dexter
-DEXTER_PATH=$PIHOME/$DEXTER
-RASPBIAN=$PIHOME/di_update/Raspbian_For_Robots
-GOPIGO3_DIR=$DEXTER_PATH/GoPiGo3
-DEXTERSCRIPT=$DEXTER_PATH/lib/Dexter/script_tools
+echo "Enabling all interfaces..."
+sudo raspi-config nonint do_i2c 0
+sudo raspi-config nonint do_spi 0
+sudo raspi-config nonint do_serial 0
+sudo raspi-config nonint do_onewire 0
+sudo raspi-config nonint do_ssh 0
+sudo raspi-config nonint do_vnc 0
 
-source $DEXTERSCRIPT/functions_library.sh
+echo "Installing Python requirements..."
+cd $HOME/GoRASGo/Software/Python
+python -m venv $HOME/.venv
+source $HOME/.venv/bin/activate
+pip install --upgrade pip setuptools wheel > /dev/null
+pip install -r requirements.txt || { echo "[ERROR] Failed to install requirements"; exit 1; }
 
-check_root_user() {
-    if [[ $EUID -ne 0 ]]; then
-        feedback "FAIL!  This script must be run as such: sudo ./install.sh"
-        exit 1
-    fi
-}
+echo "Installing GoRASGo Python package..."
+pip install . || { echo "[ERROR] Failed to install GoRASGo package"; exit 1; }
 
-install_dependencies() {
-    feedback "Installing Dependencies for the GoPiGo3"
+echo "Adding start script to .bashrc if not already present..."
+START_LINE="source $HOME/GoRASGo/Software/start.sh"
+if ! grep -Fxq "$START_LINE" $HOME/.bashrc; then
+    echo "$START_LINE" >> $HOME/.bashrc
+    echo "Added start.sh to .bashrc"
+else
+    echo "start.sh already configured in .bashrc"
+fi
 
-    sudo apt-get install --no-install-recommends -y \
-        python3-pip python3-numpy python3-curtsies \
-        python-pip python-numpy python-curtsies
-
-    feedback "Dependencies installed for the GoPiGo3"
-}
-
-install_wiringpi() {
-    # Check if WiringPi Installed
-
-    # using curl piped to bash does not leave a file behind. no need to remove it
-    # we can do either the curl - it works just fine
-    # sudo curl https://raw.githubusercontent.com/DexterInd/script_tools/master/update_wiringpi.sh | bash
-    # or call the version that's already on the SD card
-    sudo bash $DEXTERSCRIPT/update_wiringpi.sh
-    # done with WiringPi
-
-    # remove wiringPi directory if present
-    if [ -d wiringPi ]
-    then
-        sudo rm -r wiringPi
-    fi
-    # End check if WiringPi installed
-}
-
-install_pigpio() {
-    feedback "Installing pigpio"
-    sudo systemctl enable pigpiod
-    sudo systemctl start pigpiod
-}
-
-enable_spi() {
-    feedback "Removing blacklist from /etc/modprobe.d/raspi-blacklist.conf"
-
-    if grep -q "#blacklist spi-bcm2708" /etc/modprobe.d/raspi-blacklist.conf; then
-        echo "SPI already removed from blacklist"
-    else
-        sudo sed -i -e 's/blacklist spi-bcm2708/#blacklist spi-bcm2708/g' /etc/modprobe.d/raspi-blacklist.conf
-        echo "SPI removed from blacklist"
-    fi
-
-    #Adding in /etc/modules
-    feedback "Adding SPI-dev in /etc/modules"
-
-    if grep -q "spi-dev" /etc/modules; then
-        echo "spi-dev already there"
-    else
-        echo spi-dev >> /etc/modules
-        echo "spi-dev added"
-    fi
-    feedback "Making SPI changes in /boot/config.txt"
-
-    if grep -q "#dtparam=spi=on" /boot/config.txt; then
-        sudo sed -i 's/#dtparam=spi=on/dtparam=spi=on/g' /boot/config.txt
-        echo "SPI enabled"
-    elif grep -q "dtparam=spi=on" /boot/config.txt; then
-        echo "SPI already enabled"
-    else
-        sudo sh -c "echo 'dtparam=spi=on' >> /boot/config.txt"
-        echo "SPI enabled"
-    fi
-
-}
-
-install_wifi_antenna() {
-    sudo cp -f $GOPIGO3_DIR/Install/antenna_wifi.service /etc/systemd/system/antenna_wifi.service
-    sudo chown root:root /etc/systemd/system/antenna_wifi.service
-    sudo systemctl daemon-reload
-    sudo systemctl enable antenna_wifi.service
-    sudo systemctl start antenna_wifi.service
-}
-
-# Enable GoPiGo3 Power Services in Systemd
-# Make sure the gopigo3_power.py program will run at boot
-
-# Update the Service File with the new directory path
-SERVICEFILE=$GOPIGO3_DIR/Install/gpg3_power.service # This should be changed to the location of the sh file first.
-SCRIPTFILE=$GOPIGO3_DIR/Install/gpg3_power.sh
-SERVICECOMMAND=" ExecStart=/usr/bin/env bash "
-# Remove line 8 from the service file, the default location of the Service File
-sudo sed -i '6d' $SERVICEFILE
-# Add new path and file name of gpg3_power.sh to the service file
-sudo sed -i "6i $SERVICECOMMAND $SCRIPTFILE" $SERVICEFILE
-
-check_root_user
-install_dependencies
-install_pigpio
-enable_spi
-install_wifi_antenna
+echo "Rebooting in 5 seconds..."
+sleep 5
+sudo reboot
