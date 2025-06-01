@@ -41,6 +41,5 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/ieee-ras-ufcg/GoRASGo"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["gopigo3"]
+[tool.setuptools]
+py-modules = ["gopigo3"]
