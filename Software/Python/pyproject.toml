@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gopigo3"
+version = "1.4.0"
+description = "Drivers and Examples for using the GoPiGo3 in Python"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+  {name = "Modular Robotics", email = "info@modrobotics.com"},
+  {name = "IEEE RAS UFCG", email = "ras@ee.ufcg.edu.br"}
+]
+keywords = [
+  "robot",
+  "gopigo",
+  "gopigo3",
+  "modular robotics",
+  "learning",
+  "education"
+]
+classifiers = [
+  "Development Status :: Development",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Education",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Topic :: Software Development :: Embedded Systems",
+  "Topic :: Software Development :: Libraries :: Python Modules"
+]
+dependencies = [
+  "spidev==3.7",
+  "pigpio==1.78",
+  "numpy==2.2.6",
+  "opencv-python==4.11.0.86",
+  "RPi.GPIO==0.7.1"
+]
+
+[project.urls]
+Homepage = "https://github.com/ieee-ras-ufcg/GoRASGo"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["gopigo3"]

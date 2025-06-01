@@ -10,7 +10,7 @@ import time
 import os
 import math
 import json
-import easysensors
+import Software.Python.gopigo3.easysensors as easysensors
 from I2C_mutex import Mutex
 
 __version__ = "1.3.2.1"
