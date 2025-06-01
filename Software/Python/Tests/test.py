@@ -1,5 +1,5 @@
 import time
-from gopigo3.gopigo3 import GoPiGo3
+from gopigo3 import GoPiGo3
 
 gpg = GoPiGo3()
 
