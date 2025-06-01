@@ -42,4 +42,4 @@ dependencies = [
 Homepage = "https://github.com/ieee-ras-ufcg/GoRASGo"
 
 [tool.setuptools]
-py-modules = ["gopigo3"]
+packages = ["gopigo3"]
