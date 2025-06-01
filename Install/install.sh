@@ -14,10 +14,9 @@ echo "[INFO] Creating Python Virtual Environment..."
 python -m venv $HOME/.venv
 echo "[INFO] Activating Python Virtual Environment..."
 source $HOME/.venv/bin/activate
-echo "[INFO] Installing Python requirements..."
+echo "[INFO] Upgrading pip, setuptools and wheel..."
 pip install --upgrade pip setuptools wheel > /dev/null
-pip install -r requirements.txt || { echo "[ERROR] Failed to install requirements"; exit 1; }
-echo "[INFO] Installing GoRASGo Python package..."
+echo "[INFO] Installing GoRASGo Python package and requirements..."
 pip install . || { echo "[ERROR] Failed to install GoRASGo package"; exit 1; }
 
 echo "[INFO] Adding start script to .bashrc if not already present..."
