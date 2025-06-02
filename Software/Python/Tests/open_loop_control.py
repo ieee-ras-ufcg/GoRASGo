@@ -1,4 +1,3 @@
-import cv2
 import socket
 import numpy as np
 from gopigo3 import GoPiGo3
