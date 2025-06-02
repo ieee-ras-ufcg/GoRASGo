@@ -15,18 +15,26 @@ except:
     exit()
 
 print("[INFO] UDP client set")
-print("[INFO] Receiving messages...")
 
-while cv2.waitKey(1) == -1:
-    # Receive UPD message
-    data, address = gpg_socket.recvfrom(1024) 
+try:
+    print("[INFO] Running... Press Ctrl+C to stop")
 
-    # Parse wheel velocities
-    phi_dot_L, phi_dot_R = map(int, map(float, data.decode().split(" ")))
+    while True:
+        # Receive UPD message
+        data, address = gpg_socket.recvfrom(1024) 
 
-    # Limit velocity values
-    phi_dot_L, phi_dot_R = np.clip(-1000, 1000, [phi_dot_L, phi_dot_R])
+        # Parse wheel velocities
+        phi_dot_L, phi_dot_R = map(int, map(float, data.decode().split(" ")))
 
-    # Set velocities to motors
-    gpg.set_motor_dps(gpg.MOTOR_LEFT, phi_dot_L)
-    gpg.set_motor_dps(gpg.MOTOR_RIGHT, phi_dot_R)
+        # Limit velocity values
+        phi_dot_L, phi_dot_R = np.clip(-1000, 1000, [phi_dot_L, phi_dot_R])
+
+        # Set velocities to motors
+        gpg.set_motor_dps(gpg.MOTOR_LEFT, phi_dot_L)
+        gpg.set_motor_dps(gpg.MOTOR_RIGHT, phi_dot_R)
+
+except KeyboardInterrupt:
+    print("[INFO] Execution stopped externally")
+    print("[INFO] Motors shutdown")
+    gpg.set_motor_dps(gpg.MOTOR_LEFT, 0)
+    gpg.set_motor_dps(gpg.MOTOR_RIGHT, 0)
