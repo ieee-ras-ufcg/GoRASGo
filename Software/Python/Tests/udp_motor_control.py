@@ -88,11 +88,11 @@ class PID:
 gpg = GoPiGo3()
 gpg.reset_all()
 
-PID_L = PID(K_p=2.0, K_i=2.0, K_d=0.0)
-LPF_L = LowPassFilter(5, 30, 1/PID_L.dt)
+PID_L = PID(K_p=1.0, K_i=1.0, K_d=0.0)
+LPF_L = LowPassFilter(5, 100, 1/PID_L.dt)
 
-PID_R = PID(K_p=2.0, K_i=2.0, K_d=0.0)
-LPF_R = LowPassFilter(5, 30, 1/PID_R.dt)
+PID_R = PID(K_p=1.0, K_i=1.0, K_d=0.0)
+LPF_R = LowPassFilter(5, 100, 1/PID_R.dt)
 
 try:
     print("[INFO] Starting UDP client...")
