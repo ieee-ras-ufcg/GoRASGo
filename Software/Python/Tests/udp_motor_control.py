@@ -111,8 +111,8 @@ try:
         speed_R = PID_R.get_output(ref_speed_R - mea_speed_R)
 
         # Set velocities to motors
-        gpg.set_motor_dps(gpg.MOTOR_LEFT, speed_L)
-        gpg.set_motor_dps(gpg.MOTOR_RIGHT, speed_R)
+        gpg.set_motor_dps(gpg.MOTOR_LEFT, ref_speed_L)
+        gpg.set_motor_dps(gpg.MOTOR_RIGHT, ref_speed_R)
 
         # Send data to simulation
         gpg_socket.sendto(f"{ref_speed_L} {mea_speed_L} {ref_speed_R} {mea_speed_R}".encode(), sim_address)
