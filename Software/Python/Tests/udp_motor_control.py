@@ -3,68 +3,61 @@ import socket
 import numpy as np
 from gopigo3 import GoPiGo3
 
+
 # PID Controller
 class PID:
     def __init__(
         self,
         # PID Parameters
-        K_p=0.0, # Proportional parameter
-        K_i=0.0, # Integral parameter
-        K_d=0.0, # Differential parameter
-
-        dt=50e-3, # Differential time step
+        K_p=0.0,  # Proportional parameter
+        K_i=0.0,  # Integral parameter
+        K_d=0.0,  # Differential parameter
+        dt=50e-3,  # Differential time step
     ):
         # Simulation Time Step
         self.dt = dt
-        
+
         # PID Gains
         self.K_p = K_p
         self.K_i = K_i
         self.K_d = K_d
-        
+
         # Error signals
         self.prev_e = None
         self.curr_e = 0.0
         self.accu_e = 0.0
         self.diff_e = 0.0
-        
+
     def get_output(self, e):
         # Update error signals
         if self.prev_e is None:
-             self.prev_e = e
-        
+            self.prev_e = e
+
         self.curr_e = e
         self.accu_e += e * self.dt
         self.diff_e = (self.curr_e - self.prev_e) / self.dt
-        
+
         # Compute output
         output = self.K_p * e + self.K_i * self.accu_e + self.K_d * self.diff_e
-        
+
         # Update previous error
         self.prev_e = self.curr_e
-        
+
         return output
-        
+
     def reset(self):
         self.prev_e = None
         self.curr_e = 0.0
         self.accu_e = 0.0
         self.diff_e = 0.0
 
+
 gpg = GoPiGo3()
 gpg.reset_all()
 
-PID_L = PID(
-    K_p=1.0,
-    K_i=0.0,
-    K_d=0.0
-)
+PID_L = PID(K_p=1.0, K_i=0.0, K_d=0.0)
 
-PID_R = PID(
-    K_p=1.0,
-    K_i=0.0,
-    K_d=0.0
-)
+PID_R = PID(K_p=1.0, K_i=0.0, K_d=0.0)
 
 try:
     print("[INFO] Starting UDP client...")
@@ -111,11 +104,14 @@ try:
         speed_R = PID_R.get_output(ref_speed_R - mea_speed_R)
 
         # Set velocities to motors
-        gpg.set_motor_dps(gpg.MOTOR_LEFT, speed_L)
-        gpg.set_motor_dps(gpg.MOTOR_RIGHT, speed_R)
+        gpg.set_motor_dps(gpg.MOTOR_LEFT, ref_speed_L)
+        gpg.set_motor_dps(gpg.MOTOR_RIGHT, ref_speed_R)
 
         # Send data to simulation
-        gpg_socket.sendto(f"{ref_speed_L} {mea_speed_L} {ref_speed_R} {mea_speed_R}".encode(), sim_address)
+        gpg_socket.sendto(
+            f"{ref_speed_L} {mea_speed_L} {ref_speed_R} {mea_speed_R}".encode(),
+            sim_address,
+        )
 
         # Update variables
         start = finish
