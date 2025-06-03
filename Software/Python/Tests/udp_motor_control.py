@@ -25,7 +25,7 @@ try:
 
     while True:
         # Receive UPD message
-        data, address = gpg_socket.recvfrom(1024) 
+        data, address = gpg_socket.recvfrom(1024)
 
         # Parse wheel velocities
         phi_dot_L, phi_dot_R = map(int, map(float, data.decode().split(" ")))
@@ -50,7 +50,9 @@ try:
         gpg.set_motor_dps(gpg.MOTOR_LEFT, phi_dot_L)
         gpg.set_motor_dps(gpg.MOTOR_RIGHT, phi_dot_R)
 
-        print(f"L: ({phi_dot_L - speed_left:3f}) | R: ({phi_dot_R - speed_right:3f})")
+        print(
+            f"L: ({phi_dot_L - speed_left:+3.0f}) | R: ({phi_dot_R - speed_right:+3.0f})"
+        )
 
 except KeyboardInterrupt:
     print("\n[INFO] Execution stopped externally")
