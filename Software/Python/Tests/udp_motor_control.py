@@ -123,7 +123,7 @@ try:
         ref_speed_L, ref_speed_R = map(int, map(float, data.decode().split(" ")))
 
         # Limit velocity values
-        ref_speed_L, ref_speed_R = np.clip(-1000, 1000, [ref_speed_L, ref_speed_R])
+        ref_speed_L, ref_speed_R = np.clip([ref_speed_L, ref_speed_R], -1000, 1000)
 
         # Update time variables
         finish = time.time()
@@ -139,7 +139,7 @@ try:
         power_L = PID_L.get_output(ref_speed_L - mea_speed_L)
         power_R = PID_R.get_output(ref_speed_R - mea_speed_R)
 
-        power_L, power_R = np.clip(-100, 100, [power_L, power_R])
+        power_L, power_R = np.clip([power_L, power_R], -100, 100)
 
         # Set velocities to motors
         gpg.set_motor_power(gpg.MOTOR_LEFT, power_L)
