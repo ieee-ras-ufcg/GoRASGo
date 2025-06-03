@@ -1,4 +1,3 @@
-import time
 import socket
 import numpy as np
 from gopigo3 import GoPiGo3
@@ -17,10 +16,6 @@ except:
 
 print("[INFO] UDP client set")
 
-last_encoder_left = 0
-last_encoder_right = 0
-start = time.time()
-
 try:
     print("[INFO] Running... Press Ctrl+C to stop")
 
@@ -34,27 +29,10 @@ try:
         # Limit velocity values
         phi_dot_L, phi_dot_R = np.clip(-1000, 1000, [phi_dot_L, phi_dot_R])
 
-        # Update time variables
-        finish = time.time()
-
-        # Estimate actual speed
-        encoder_left = gpg.get_motor_encoder(gpg.MOTOR_LEFT)
-        encoder_right = gpg.get_motor_encoder(gpg.MOTOR_RIGHT)
-        speed_left = (encoder_left - last_encoder_left) / (finish - start)
-        speed_right = (encoder_right - last_encoder_right) / (finish - start)
-
         # Set velocities to motors
         gpg.set_motor_dps(gpg.MOTOR_LEFT, phi_dot_L)
         gpg.set_motor_dps(gpg.MOTOR_RIGHT, phi_dot_R)
 
-        print(
-            f"L: ({last_encoder_left:+04.0f}) | R: ({encoder_left:+04.0f}) | t: ({(finish - start):+.2e})"
-        )
-
-        # Update variables
-        start = finish
-        last_encoder_left = encoder_left
-        last_encoder_right = encoder_right
 
 except KeyboardInterrupt:
     print("\n[INFO] Execution stopped externally")
