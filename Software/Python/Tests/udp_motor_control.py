@@ -136,6 +136,7 @@ try:
         mea_speed_R = (encoder_R - last_encoder_right) / (finish - start)
 
         # Compute control action
+        print(ref_speed_L - mea_speed_L)
         power_L = PID_L.get_output(ref_speed_L - mea_speed_L)
         power_R = PID_R.get_output(ref_speed_R - mea_speed_R)
 
