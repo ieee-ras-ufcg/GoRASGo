@@ -33,7 +33,7 @@ try:
         gpg.set_motor_dps(gpg.MOTOR_RIGHT, phi_dot_R)
 
 except KeyboardInterrupt:
-    print("[INFO] Execution stopped externally")
+    print("\n[INFO] Execution stopped externally")
     print("[INFO] Motors shutdown")
     gpg.set_motor_dps(gpg.MOTOR_LEFT, 0)
     gpg.set_motor_dps(gpg.MOTOR_RIGHT, 0)
