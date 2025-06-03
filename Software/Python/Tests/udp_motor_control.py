@@ -94,6 +94,8 @@ try:
         # Parse wheel velocities
         ref_speed_L, ref_speed_R = map(int, map(float, data.decode().split(" ")))
 
+        print(ref_speed_L, ref_speed_R)
+
         # Limit velocity values
         ref_speed_L, ref_speed_R = np.clip(-1000, 1000, [ref_speed_L, ref_speed_R])
 
