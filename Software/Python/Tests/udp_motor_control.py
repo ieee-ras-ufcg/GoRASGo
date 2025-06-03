@@ -51,7 +51,7 @@ try:
         gpg.set_motor_dps(gpg.MOTOR_RIGHT, phi_dot_R)
 
         print(
-            f"L: ({phi_dot_L - speed_left:+04.0f}) | R: ({phi_dot_R - speed_right:+04.0f})"
+            f"L: ({encoder_left:+04.0f}) | R: ({encoder_right:+04.0f})"
         )
 
 except KeyboardInterrupt:
