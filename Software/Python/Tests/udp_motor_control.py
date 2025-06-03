@@ -3,8 +3,68 @@ import socket
 import numpy as np
 from gopigo3 import GoPiGo3
 
+# PID Controller
+class PID:
+    def __init__(
+        self,
+        # PID Parameters
+        K_p=0.0, # Proportional parameter
+        K_i=0.0, # Integral parameter
+        K_d=0.0, # Differential parameter
+
+        dt=50e-3, # Differential time step
+    ):
+        # Simulation Time Step
+        self.dt = dt
+        
+        # PID Gains
+        self.K_p = K_p
+        self.K_i = K_i
+        self.K_d = K_d
+        
+        # Error signals
+        self.prev_e = None
+        self.curr_e = 0.0
+        self.accu_e = 0.0
+        self.diff_e = 0.0
+        
+    def get_output(self, e):
+        # Update error signals
+        if self.prev_e is None:
+             self.prev_e = e
+        
+        self.curr_e = e
+        self.accu_e += e * self.dt
+        self.diff_e = (self.curr_e - self.prev_e) / self.dt
+        
+        # Compute output
+        output = self.K_p * e + self.K_i * self.accu_e + self.K_d * self.diff_e
+        
+        # Update previous error
+        self.prev_e = self.curr_e
+        
+        return output
+        
+    def reset(self):
+        self.prev_e = None
+        self.curr_e = 0.0
+        self.accu_e = 0.0
+        self.diff_e = 0.0
+
 gpg = GoPiGo3()
 gpg.reset_all()
+
+PID_L = PID(
+    K_p=0.0,
+    K_i=0.0,
+    K_d=0.0
+)
+
+PID_R = PID(
+    K_p=0.0,
+    K_i=0.0,
+    K_d=0.0
+)
 
 try:
     print("[INFO] Starting UDP client...")
@@ -29,35 +89,35 @@ try:
         data, address = gpg_socket.recvfrom(1024)
 
         # Parse wheel velocities
-        phi_dot_L, phi_dot_R = map(int, map(float, data.decode().split(" ")))
+        ref_speed_L, ref_speed_R = map(int, map(float, data.decode().split(" ")))
 
         # Limit velocity values
-        phi_dot_L, phi_dot_R = np.clip(-1000, 1000, [phi_dot_L, phi_dot_R])
+        ref_speed_L, ref_speed_R = np.clip(-1000, 1000, [ref_speed_L, ref_speed_R])
 
         # Update time variables
         finish = time.time()
 
         # Estimate actual speed
-        encoder_left = gpg.get_motor_encoder(gpg.MOTOR_LEFT)
-        encoder_right = gpg.get_motor_encoder(gpg.MOTOR_RIGHT)
-        speed_left = (encoder_left - last_encoder_left) / (finish - start)
-        speed_right = (encoder_right - last_encoder_right) / (finish - start)
+        encoder_L = gpg.get_motor_encoder(gpg.MOTOR_LEFT)
+        encoder_R = gpg.get_motor_encoder(gpg.MOTOR_RIGHT)
+        mea_speed_L = (encoder_L - last_encoder_left) / (finish - start)
+        mea_speed_R = (encoder_R - last_encoder_right) / (finish - start)
+
+        # Compute control action
+        speed_L = PID_L.get_output(ref_speed_L - mea_speed_L)
+        speed_R = PID_R.get_output(ref_speed_R - mea_speed_R)
 
         # Set velocities to motors
-        gpg.set_motor_dps(gpg.MOTOR_LEFT, phi_dot_L)
-        gpg.set_motor_dps(gpg.MOTOR_RIGHT, phi_dot_R)
-
-        print(
-            f"L: ({speed_left:+04.0f}) | R: ({speed_right:+04.0f}) | t: ({(finish - start):+.2e})"
-        )
+        gpg.set_motor_dps(gpg.MOTOR_LEFT, speed_L)
+        gpg.set_motor_dps(gpg.MOTOR_RIGHT, speed_R)
 
         # Update variables
         start = finish
-        last_encoder_left = encoder_left
-        last_encoder_right = encoder_right
+        last_encoder_left = encoder_L
+        last_encoder_right = encoder_R
 
 except KeyboardInterrupt:
     print("\n[INFO] Execution stopped externally")
-    print("[INFO] Motors shutdown")
+    print("[INFO] Shutting down motors")
     gpg.set_motor_dps(gpg.MOTOR_LEFT, 0)
     gpg.set_motor_dps(gpg.MOTOR_RIGHT, 0)
