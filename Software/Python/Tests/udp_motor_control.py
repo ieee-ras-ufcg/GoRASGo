@@ -73,8 +73,9 @@ try:
 
     sim_address = (socket.gethostbyname("loolirer"), 25565)
 
-except:
+except Exception as e:
     print("[ERROR] Could not start UDP client")
+    print(e)
     exit()
 
 print("[INFO] UDP client set")
