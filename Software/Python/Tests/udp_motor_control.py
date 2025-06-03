@@ -71,6 +71,8 @@ try:
     gpg_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     gpg_socket.bind(("0.0.0.0", 25565))
 
+    sim_address = (socket.gethostbyname("loolirer"), 25565)
+
 except:
     print("[ERROR] Could not start UDP client")
     exit()
@@ -110,6 +112,9 @@ try:
         # Set velocities to motors
         gpg.set_motor_dps(gpg.MOTOR_LEFT, speed_L)
         gpg.set_motor_dps(gpg.MOTOR_RIGHT, speed_R)
+
+        # Send data to simulation
+        gpg_socket.sendto(f"{ref_speed_L} {mea_speed_L} {ref_speed_R} {mea_speed_R}".encode(), sim_address)
 
         # Update variables
         start = finish
