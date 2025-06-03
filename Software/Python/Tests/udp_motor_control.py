@@ -46,6 +46,13 @@ try:
         last_encoder_left = encoder_left
         last_encoder_right = encoder_right
 
+        # Reset encoders when motor is stopped
+        if int(speed_left) == 0:
+            gpg.reset_motor_encoder(gpg.MOTOR_LEFT)
+
+        if int(speed_right) == 0:
+            gpg.reset_motor_encoder(gpg.MOTOR_RIGHT) 
+
         # Set velocities to motors
         gpg.set_motor_dps(gpg.MOTOR_LEFT, phi_dot_L)
         gpg.set_motor_dps(gpg.MOTOR_RIGHT, phi_dot_R)
