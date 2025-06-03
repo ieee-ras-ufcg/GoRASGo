@@ -55,9 +55,9 @@ class PID:
 gpg = GoPiGo3()
 gpg.reset_all()
 
-PID_L = PID(K_p=1.0, K_i=0.5, K_d=0.0)
+PID_L = PID(K_p=1.0, K_i=1.0, K_d=0.0)
 
-PID_R = PID(K_p=1.0, K_i=0.5, K_d=0.0)
+PID_R = PID(K_p=1.0, K_i=1.0, K_d=0.0)
 
 try:
     print("[INFO] Starting UDP client...")
