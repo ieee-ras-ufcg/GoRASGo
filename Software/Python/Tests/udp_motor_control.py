@@ -88,11 +88,11 @@ class PID:
 gpg = GoPiGo3()
 gpg.reset_all()
 
-PID_L = PID(K_p=1.0, K_i=1.0, K_d=0.0)
-LPF_L = LowPassFilter(5, 100, 1/PID_L.dt)
+PID_L = PID(K_p=0.25, K_i=0.5, K_d=0.0)
+LPF_L = LowPassFilter(1, 10, 1/PID_L.dt)
 
-PID_R = PID(K_p=1.0, K_i=1.0, K_d=0.0)
-LPF_R = LowPassFilter(5, 100, 1/PID_R.dt)
+PID_R = PID(K_p=0.25, K_i=0.5, K_d=0.0)
+LPF_R = LowPassFilter(1, 10, 1/PID_R.dt)
 
 try:
     print("[INFO] Starting UDP client...")
@@ -132,20 +132,22 @@ try:
         encoder_L = gpg.get_motor_encoder(gpg.MOTOR_LEFT)
         encoder_R = gpg.get_motor_encoder(gpg.MOTOR_RIGHT)
 
-        mea_speed_L = LPF_L.filter((encoder_L - last_encoder_left) / (finish - start))
-        mea_speed_R = LPF_R.filter((encoder_R - last_encoder_right) / (finish - start))
+        mea_speed_L = (encoder_L - last_encoder_left) / (finish - start)
+        mea_speed_R = (encoder_R - last_encoder_right) / (finish - start)
 
         # Compute control action
-        speed_L = PID_L.get_output(ref_speed_L - mea_speed_L)
-        speed_R = PID_R.get_output(ref_speed_R - mea_speed_R)
+        power_L = PID_L.get_output(ref_speed_L - mea_speed_L)
+        power_R = PID_R.get_output(ref_speed_R - mea_speed_R)
+
+        power_L, power_R = np.clip(-100, 100, [power_L, power_R])
 
         # Set velocities to motors
-        gpg.set_motor_dps(gpg.MOTOR_LEFT, speed_L)
-        gpg.set_motor_dps(gpg.MOTOR_RIGHT, speed_R)
+        gpg.set_motor_power(gpg.MOTOR_LEFT, power_L)
+        gpg.set_motor_power(gpg.MOTOR_RIGHT, power_R)
 
         # Send data to simulation
         gpg_socket.sendto(
-            f"{ref_speed_L} {mea_speed_L} {ref_speed_R} {mea_speed_R}".encode(),
+            f"{ref_speed_L} {mea_speed_L} {power_L} {ref_speed_R} {mea_speed_R} {power_R}".encode(),
             sim_address,
         )
 
