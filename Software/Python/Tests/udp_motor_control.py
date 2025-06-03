@@ -50,7 +50,7 @@ try:
         gpg.set_motor_dps(gpg.MOTOR_LEFT, phi_dot_L)
         gpg.set_motor_dps(gpg.MOTOR_RIGHT, phi_dot_R)
 
-        print(f"L: {phi_dot_L:.2f}/{speed_left:.2f} ({phi_dot_L - speed_left:.2f}) | R: {phi_dot_R:.2f}/{speed_right:.2f} ({phi_dot_R - speed_right:.2f})")
+        print(f"L: ({phi_dot_L - speed_left:.2f}) | R: ({phi_dot_R - speed_right:.2f})")
 
 except KeyboardInterrupt:
     print("\n[INFO] Execution stopped externally")
