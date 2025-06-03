@@ -71,6 +71,8 @@ try:
     gpg_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     gpg_socket.bind(("0.0.0.0", 25565))
 
+    sim_address = ("192.168.1.102", 25565)
+
 except Exception as e:
     print("[ERROR] Could not start UDP client")
     print(e)
@@ -87,7 +89,7 @@ try:
 
     while True:
         # Receive UPD message
-        data, sim_address = gpg_socket.recvfrom(1024)
+        data, _ = gpg_socket.recvfrom(1024)
 
         # Parse wheel velocities
         ref_speed_L, ref_speed_R = map(int, map(float, data.decode().split(" ")))
