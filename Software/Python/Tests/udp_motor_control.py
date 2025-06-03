@@ -36,16 +36,12 @@ try:
 
         # Update time variables
         finish = time.time()
-        dt = finish - start
-        start = finish
 
         # Estimate actual speed
         encoder_left = gpg.get_motor_encoder(gpg.MOTOR_LEFT)
         encoder_right = gpg.get_motor_encoder(gpg.MOTOR_RIGHT)
-        speed_left = (encoder_left - last_encoder_left) / dt
-        speed_right = (encoder_right - last_encoder_right) / dt
-        last_encoder_left = encoder_left
-        last_encoder_right = encoder_right
+        speed_left = (encoder_left - last_encoder_left) / (finish - start)
+        speed_right = (encoder_right - last_encoder_right) / (finish - start)
 
         # Set velocities to motors
         gpg.set_motor_dps(gpg.MOTOR_LEFT, phi_dot_L)
@@ -54,6 +50,11 @@ try:
         print(
             f"L: ({encoder_left:+04.0f}) | R: ({encoder_right:+04.0f})"
         )
+
+        # Update variables
+        start = finish
+        last_encoder_left = encoder_left
+        last_encoder_right = encoder_right
 
 except KeyboardInterrupt:
     print("\n[INFO] Execution stopped externally")
