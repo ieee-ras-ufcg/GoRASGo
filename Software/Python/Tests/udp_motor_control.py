@@ -4,6 +4,7 @@ import numpy as np
 from gopigo3 import GoPiGo3
 
 gpg = GoPiGo3()
+gpg.reset_all()
 
 try:
     print("[INFO] Starting UDP client...")
@@ -45,13 +46,6 @@ try:
         speed_right = (encoder_right - last_encoder_right) / dt
         last_encoder_left = encoder_left
         last_encoder_right = encoder_right
-
-        # Reset encoders when motor is stopped
-        if int(speed_left) == 0:
-            gpg.reset_motor_encoder(gpg.MOTOR_LEFT)
-
-        if int(speed_right) == 0:
-            gpg.reset_motor_encoder(gpg.MOTOR_RIGHT) 
 
         # Set velocities to motors
         gpg.set_motor_dps(gpg.MOTOR_LEFT, phi_dot_L)
