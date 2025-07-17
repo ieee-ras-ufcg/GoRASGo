@@ -32,7 +32,7 @@ try:
         data, address = gpg_socket.recvfrom(1024)
 
         # Parse wheel velocities
-        ref_speed_L, ref_speed_R = map(int, map(float, data.decode().split(" ")))
+        ref_speed_L, ref_speed_R = list(map(int, map(float, data.decode().split(" "))))
 
         # Limit velocity values
         ref_speed_L, ref_speed_R = np.clip(-1000, 1000, [ref_speed_L, ref_speed_R])
