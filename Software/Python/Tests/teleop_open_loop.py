@@ -11,7 +11,7 @@ try:
     gpg_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     gpg_socket.bind(("0.0.0.0", 25565))
 
-    sim_address = ("192.168.0.101", 25565)
+    sim_address = (socket.gethostbyname(socket.gethostname()), 25565)
 
 except Exception as e:
     print("[ERROR] Could not start UDP client")
