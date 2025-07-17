@@ -52,7 +52,7 @@ try:
 
         # Send data to simulation
         gpg_socket.sendto(
-            f"{ref_speed_L} {mea_speed_L} {ref_speed_R} {mea_speed_R}".encode(),
+            f"{ref_speed_L} {mea_speed_L} 0.0 {ref_speed_R} {mea_speed_R} 0.0".encode(),
             sim_address,
         )
 
