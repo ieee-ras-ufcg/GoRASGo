@@ -11,7 +11,7 @@ try:
     gpg_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     gpg_socket.bind(("0.0.0.0", 25565))
 
-    sim_address = (socket.gethostbyname(socket.gethostname()), 25565)
+    sim_address = ("192.168.0.111", 25565)
 
 except Exception as e:
     print("[ERROR] Could not start UDP client")
@@ -32,8 +32,7 @@ try:
         data, address = gpg_socket.recvfrom(1024)
 
         # Parse wheel velocities
-        print(list(map(int, map(float, data.decode().split(" ")))))
-        ref_speed_L, ref_speed_R = list(map(int, map(float, data.decode().split(" "))))
+        ref_speed_L, ref_speed_R = map(int, map(float, data.decode().split(" ")))
 
         # Limit velocity values
         ref_speed_L, ref_speed_R = np.clip(-1000, 1000, [ref_speed_L, ref_speed_R])
