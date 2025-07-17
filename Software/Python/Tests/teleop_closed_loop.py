@@ -89,10 +89,10 @@ gpg = GoPiGo3()
 gpg.reset_all()
 
 PID_L = PID(K_p=0.25, K_i=0.5, K_d=0.0)
-LPF_L = LowPassFilter(1, 10, 1/PID_L.dt)
+LPF_L = LowPassFilter(1, 10, 1 / PID_L.dt)
 
 PID_R = PID(K_p=0.25, K_i=0.5, K_d=0.0)
-LPF_R = LowPassFilter(1, 10, 1/PID_R.dt)
+LPF_R = LowPassFilter(1, 10, 1 / PID_R.dt)
 
 try:
     print("[INFO] Starting UDP client...")
@@ -120,7 +120,7 @@ try:
         data, _ = gpg_socket.recvfrom(1024)
 
         # Parse wheel velocities
-        ref_speed_L, ref_speed_R = map(int, map(float, data.decode().split(" ")))
+        ref_speed_L, ref_speed_R = list(map(int, map(float, data.decode().split(" "))))
 
         # Limit velocity values
         ref_speed_L, ref_speed_R = np.clip([ref_speed_L, ref_speed_R], -1000, 1000)
