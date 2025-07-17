@@ -33,8 +33,6 @@ try:
 
         # Parse wheel velocities
         ref_speed_L, ref_speed_R = list(map(int, map(float, data.decode().split(" "))))
-        print(ref_speed_L, ref_speed_R)
-
 
         # Limit velocity values
         ref_speed_L, ref_speed_R = np.clip(-1000, 1000, [ref_speed_L, ref_speed_R])
@@ -49,8 +47,8 @@ try:
         mea_speed_R = (encoder_R - last_encoder_right) / (finish - start)
 
         # Set velocities to motors
-        gpg.set_motor_dps(gpg.MOTOR_LEFT, mea_speed_L)
-        gpg.set_motor_dps(gpg.MOTOR_RIGHT, mea_speed_R)
+        gpg.set_motor_dps(gpg.MOTOR_LEFT, ref_speed_R)
+        gpg.set_motor_dps(gpg.MOTOR_RIGHT, ref_speed_R)
 
         # Send data to simulation
         gpg_socket.sendto(
