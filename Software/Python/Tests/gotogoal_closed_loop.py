@@ -53,7 +53,7 @@ class PID:
 
 def get_pose(point_cloud):
     if point_cloud.shape != (3, 2):
-        return None
+        return None, None
 
     distance_matrix = np.abs(
         [
@@ -109,6 +109,10 @@ try:
 
         # Getting GoPiGo3 Differential Drive Model Position
         position, front_vector = get_pose(point_cloud)
+
+        if position is None:
+            print("Format not correct!")
+            continue
 
         path_vector = target - position
         target_distance = np.linalg.norm(path_vector)
