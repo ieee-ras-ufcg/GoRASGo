@@ -107,10 +107,10 @@ try:
 
         point_cloud = np.frombuffer(buffer, dtype=np.float32).reshape(3, -1).T[:, :2]
 
-        print(point_cloud)
-
         # Getting GoPiGo3 Differential Drive Model Position
         position, front_vector = get_pose(point_cloud)
+
+        print(position, front_vector)
 
         if position is None:
             print("Format not correct!")
