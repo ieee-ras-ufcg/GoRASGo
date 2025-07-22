@@ -80,9 +80,9 @@ dt = 1.0 / 30.0
 r = 0.0325
 s = 0.115
 
-OrientationController = PID(K_p=30.0, K_i=0.0, K_d=0.0, dt=dt)
+OrientationController = PID(K_p=60.0, K_i=0.0, K_d=0.0, dt=dt)
 
-VelocityController = PID(K_p=10.0, K_i=0.0, K_d=0.0, dt=dt)
+VelocityController = PID(K_p=20.0, K_i=0.0, K_d=0.0, dt=dt)
 
 try:
     print("[INFO] Starting UDP client...")
