@@ -99,7 +99,7 @@ print("[INFO] UDP client set")
 try:
     print("[INFO] Running... Press Ctrl+C to stop")
 
-    target = np.array([0.0, 0.0, 0.0])
+    target = np.array([0.0, 0.0])
 
     while True:
         # Receive UPD message
