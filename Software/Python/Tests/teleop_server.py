@@ -92,8 +92,8 @@ class XboxController:
 
             except UnpluggedError:
                 self.plugged = False
-        
-    
+
+
 gpg_server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 gpg_server_socket.bind(("0.0.0.0", 25565))
 
@@ -103,8 +103,8 @@ gpg_client_address = (socket.gethostbyname("gopigo3"), 25565)
 r = 0.0325
 s = 0.115
 
-max_v_B = 0.25 # m/s
-max_theta_dot = 2 # rad/s
+max_v_B = 0.20  # m/s
+max_theta_dot = 2  # rad/s
 
 XC = XboxController()
 
@@ -116,12 +116,17 @@ try:
         LJ = XC.LJ[0] if abs(XC.LJ[0]) > 0.1 else 0.0
         theta_dot = -LJ * max_theta_dot
         v_B = (XC.RT - XC.LT) * max_v_B
-        
+
         # Differential Drive Model
-        theta_dot_L, theta_dot_R = np.linalg.inv([[r/2.0, r/2.0], [-r/s, r/s]]) @ np.array([v_B, theta_dot])
+        theta_dot_L, theta_dot_R = np.linalg.inv(
+            [[r / 2.0, r / 2.0], [-r / s, r / s]]
+        ) @ np.array([v_B, theta_dot])
 
         # Send data to GoPiGo3
-        gpg_server_socket.sendto(f"{theta_dot_L * 180 / np.pi} {theta_dot_R * 180 / np.pi}".encode(), gpg_client_address)
+        gpg_server_socket.sendto(
+            f"{theta_dot_L * 180 / np.pi} {theta_dot_R * 180 / np.pi}".encode(),
+            gpg_client_address,
+        )
 
 except KeyboardInterrupt:
     print("\n[INFO] Execution stopped externally")
