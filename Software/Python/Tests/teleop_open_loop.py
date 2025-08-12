@@ -50,11 +50,15 @@ try:
         gpg.set_motor_dps(gpg.MOTOR_LEFT, ref_speed_L)
         gpg.set_motor_dps(gpg.MOTOR_RIGHT, ref_speed_R)
 
-        # Send data to simulation
-        gpg_socket.sendto(
-            f"{ref_speed_L} {mea_speed_L} 0.0 {ref_speed_R} {mea_speed_R} 0.0".encode(),
-            sim_address,
-        )
+        try:
+            # Send data to simulation
+            gpg_socket.sendto(
+                f"{ref_speed_L} {mea_speed_L} 0.0 {ref_speed_R} {mea_speed_R} 0.0".encode(),
+                sim_address,
+            )
+
+        except:
+            pass
 
         # Update variables
         start = finish
