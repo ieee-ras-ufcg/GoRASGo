@@ -90,7 +90,7 @@ class UGVSimpleGoToGoal(Node):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((self.udp_ip, self.udp_port))
 
-        self.target = np.array([0.0, 0.0])  # Robot's goal
+        self.target = np.array([0.0, 0.0])  # Robot's goal 
 
         self.publisher = self.create_publisher(Twist, "cmd_vel", 10)
 
